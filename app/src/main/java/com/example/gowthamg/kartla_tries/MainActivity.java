@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -15,32 +16,28 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageView image;
+    String Html;
 
     public  void downloadimage(View view)
     {
         DownloadTask2 task = new DownloadTask2();
+        BackgroundTask btask = new BackgroundTask();
 
 
-        try {
-          //  asyncDialog.setMessage("Loading");
-          //  asyncDialog.show();
+        //  asyncDialog.setMessage("Loading");
+        //  asyncDialog.show();
 
-           // Bitmap showimage = task.execute("https://kart.la/wp-content/uploads/2016/07/wp-image-1630888628jpeg-150x150.jpeg").get();
+        // Bitmap showimage = task.execute("https://kart.la/wp-content/uploads/2016/07/wp-image-1630888628jpeg-150x150.jpeg").get();
 
-            String html = task.execute("https://kart.la/search-results/?gmw_keywords&gmw_address%5B0%5D=ambattur&gmw_post=post&tax_category%5B0%5D=235&gmw_distance=100&gmw_units=metric&gmw_form=2&gmw_per_page=10&gmw_lat=13.1143167&gmw_lng=80.14805509999997&gmw_px=pt&action=gmw_post").get();
-            Toast.makeText(this, "Done Downloading!!!", Toast.LENGTH_SHORT).show();
-          //  asyncDialog.dismiss();
-           // image.setImageBitmap(showimage);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        task.execute("https://kart.la/search-results/?gmw_keywords&gmw_address%5B0%5D=ambattur&gmw_post=post&tax_category%5B0%5D=235&gmw_distance=100&gmw_units=metric&gmw_form=2&gmw_per_page=10&gmw_lat=13.1143167&gmw_lng=80.14805509999997&gmw_px=pt&action=gmw_post");
+        // btask.execute().get();
+        Toast.makeText(this, "Done Downloading!!!", Toast.LENGTH_SHORT).show();
+        //  asyncDialog.dismiss();
+        // image.setImageBitmap(showimage);
     }
 
     public class DownloadTask extends AsyncTask<String, Void,Bitmap> {
@@ -145,10 +142,41 @@ public class MainActivity extends AppCompatActivity {
 
             super.onPostExecute(s);
             g.dismiss();
+            Html = s;
+            Log.d("Source code",Html);
         }
     }
 
+    private class BackgroundTask extends AsyncTask <Void, Void, Void> {
+        private ProgressDialog dialog;
 
+
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(MainActivity.this);
+            dialog.setMessage("Doing something, please wait.");
+            dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
