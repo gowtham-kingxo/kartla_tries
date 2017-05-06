@@ -1,5 +1,6 @@
 package com.example.gowthamg.kartla_tries;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -32,7 +33,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class DownloadTask extends AsyncTask<String, Void,Bitmap> {
-
+        ProgressDialog asyncDialog = new ProgressDialog(MainActivity.this);
+        String typeStatus;
+        @Override
+        protected void onPreExecute() {
+            //set message of the dialog
+            asyncDialog.setMessage("Loading...");
+            //show dialog
+            asyncDialog.show();
+            super.onPreExecute();
+        }
         @Override
         protected Bitmap doInBackground(String... urls) {
             String result = "";
@@ -57,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
            return null;
         }
+
     }
 
 
@@ -64,10 +75,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       // image = (ImageView) findViewById(R.id.imageView2);
+        image = (ImageView) findViewById(R.id.image);
 
 
-        DownloadTask task = new DownloadTask();
 
 
     }
